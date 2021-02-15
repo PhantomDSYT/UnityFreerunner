@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
 
         if (jumKey)
         {
-            rigidbodyComp.AddForce(Vector3.up * 9, ForceMode.VelocityChange);
+            rigidbodyComp.AddForce(Vector3.up * 5, ForceMode.VelocityChange);
             jumKey = false;
         }
     }
