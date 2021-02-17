@@ -4,45 +4,50 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Camera mainCamera;
+    [SerializeField] private CharacterController controller;
+    [SerializeField] private float speed = 12f;
+    [SerializeField] private float gravity = -9.81f;
+    [SerializeField] Transform groundCheck;
+    [SerializeField] private float groundDistance = 0.4f;
+    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float jumpHeight = 3f;
 
-    private bool jumKey;
-    private Rigidbody rigidbodyComp;
-    private float speed = 3;
     private float horizontalInput;
     private float verticalInput;
-    private float facing;
+
+    private Vector3 velocity;
+    private bool isGrounded;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidbodyComp = GetComponent<Rigidbody>();
-        mainCamera = Camera.main;
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (isGrounded && velocity.y < 0)
         {
-            jumKey = true;
+            velocity.y = -2f;
         }
 
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
-        facing = mainCamera.transform.eulerAngles.y;
-    }
 
-    private void FixedUpdate()
-    {
-        Vector3 inputVector = new Vector3(horizontalInput * speed, rigidbodyComp.velocity.y, verticalInput * speed);
-        Vector3 turnedInput = Quaternion.Euler(0, facing, 0) * inputVector;
-        rigidbodyComp.velocity = turnedInput;
+        Vector3 move = transform.right * horizontalInput + transform.forward * verticalInput;
 
-        if (jumKey)
+        controller.Move(move * speed * Time.deltaTime);
+
+        if(Input.GetButtonDown("Jump") && isGrounded)
         {
-            rigidbodyComp.AddForce(Vector3.up * 5, ForceMode.VelocityChange);
-            jumKey = false;
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+
+        velocity.y += gravity * Time.deltaTime;
+
+        controller.Move(velocity * Time.deltaTime);
     }
 }

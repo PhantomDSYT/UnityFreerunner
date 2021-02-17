@@ -6,10 +6,9 @@ public class MouseLook : MonoBehaviour
 {
     [SerializeField] private float mouseSensitivity = 100f;
     [SerializeField] private Transform playerBody;
-    internal static Camera main;
-    private float pitch = 0.0f;
-    private float yaw = 0.0f;
-    private float XRotation = 0f;
+    private float mouseX;
+    private float mouseY;
+    private float xRotation = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -20,14 +19,14 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        yaw = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        pitch = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        XRotation -= pitch;
-        XRotation = Mathf.Clamp(XRotation, -90f, 90f);
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.localRotation = Quaternion.Euler(XRotation, 0f, 0f);
-        playerBody.Rotate(Vector3.up * yaw);
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        playerBody.Rotate(Vector3.up * mouseX);
         
     }
 }
